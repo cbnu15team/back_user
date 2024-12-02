@@ -19,7 +19,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
-            User registeredUser = userService.registerUser(user);
+            User registeredUser = userService.registerUser(user); // userService 호출
             return ResponseEntity.ok(registeredUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("회원가입 실패: " + e.getMessage());
@@ -30,7 +30,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String id, @RequestParam String password) {
         try {
-            User user = userService.login(id, password);
+            User user = userService.login(id, password); // login 메서드 호출
             return ResponseEntity.ok(user);
         } catch (Exception e) {
             return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
