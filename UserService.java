@@ -3,6 +3,9 @@ package com.example.joinup.user.service;
 import com.example.joinup.user.entity.User;
 import com.example.joinup.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -13,22 +16,24 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // 회원가입
+    @Transactional
     public User registerUser(User user) {
-        // ID 중복 확인
-        if (userRepository.findById(user.getId()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 ID입니다.");
+        // 로그인 ID 중복 확인
+        boolean exists = userRepository.findById(user.getId()).isPresent(); // 적절한 ID 체크 로직 사용
+        if (exists) {
+            throw new RuntimeException("이미 존재하는 ID입니다: " + user.getId());
         }
-        // 닉네임 중복 확인
-        if (userRepository.findByNickname(user.getNickname()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 닉네임입니다.");
-        }
+
+        // 사용자 저장
         return userRepository.save(user);
     }
 
-    // 로그인
     public User login(String id, String password) {
         return userRepository.findByIdAndPassword(id, password)
                 .orElseThrow(() -> new RuntimeException("아이디 또는 비밀번호가 잘못되었습니다."));
+    }
+
+    public Optional<User> findByUserId(Integer userId) {
+        return userRepository.findById(userId); // userId 기반 조회
     }
 }
